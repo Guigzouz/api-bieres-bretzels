@@ -3,7 +3,8 @@ import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect,
 import { Server, Socket } from 'socket.io';
 import { Groom } from '../../bots/entities/groom';
 import { WhoIs } from '../../bots/entities/who-is';
-
+import { Lorem } from 'src/bots/entities/lorem';
+import { BotsModule } from 'src/bots/bots.module';
 
 
 @WebSocketGateway()
@@ -16,16 +17,18 @@ export class EventsGateway
   private static LOGGER :Logger = new Logger('Gateway');
   private static CHANNEL = "message";
 
-  constructor(private whoIs: WhoIs) {}
+  constructor(private whoIs: WhoIs, private lorem: Lorem) {}
 
   @WebSocketServer()
   private server: Server;
 
   async handleConnection(socket: Socket, ...args: any[]){
     const user = await this.whoIs.get(socket);
+    const lorem = await this.lorem.hello();
     socket.emit(EventsGateway.CHANNEL, Groom.INSTANCE.hello())
     EventsGateway.LOGGER.log(`Connexion de : ${user.name} ip = ${user.ip}`);
     this.server.emit(EventsGateway.CHANNEL, `Welcome @${user.name} on @${user.ip} !`)
+    this.server.emit(EventsGateway.CHANNEL, `${lorem}`)
   }
 
   @SubscribeMessage(EventsGateway.CHANNEL)

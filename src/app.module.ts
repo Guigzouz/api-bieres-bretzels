@@ -6,8 +6,6 @@ import { BretzelsModule } from './bretzels/bretzels.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { EventsGateway } from './gateway/events/events.gateway';
-import { Groom } from './bots/entities/groom';
-import { WhoIs } from './bots/entities/who-is';
 import { BotsModule } from './bots/bots.module';
 
 @Module({
