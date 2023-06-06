@@ -1,10 +1,16 @@
 import { Logger } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Groom } from 'src/bots/bots.module';
 
 
 @WebSocketGateway()
-export class EventsGateway {
+export class EventsGateway 
+  implements
+    OnGatewayConnection<Socket>,
+    OnGatewayDisconnect<Socket>
+{
+
   private static LOGGER :Logger = new Logger('Gateway');
   private static CHANNEL = "message";
 
@@ -13,6 +19,8 @@ export class EventsGateway {
 
   handleConnection(socket: Socket){
     const ip = socket.client.conn.remoteAddress;
+    socket.emit(EventsGateway.CHANNEL, Groom.INSTANCE.hello())
+    EventsGateway.LOGGER.log(`Connexion de : ${socket.id} ip = ${ip}`);
     this.server.emit(EventsGateway.CHANNEL, `Welcome @${socket.id} on @${ip} !`)
   }
 
