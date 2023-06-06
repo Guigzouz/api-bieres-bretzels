@@ -1,15 +1,10 @@
 import { Module } from '@nestjs/common';
+import { WhoIs } from './entities/who-is';
+import { HttpModule } from '@nestjs/axios/dist';
 
-@Module({})
-export class Groom {
-    public static INSTANCE : Groom = new Groom();
-    private constructor(){}
-
-        public hello(): string{
-            return [
-                "Welcome", 
-                "Hello", 
-                "Ciao", 
-                "Yo"][Math.floor(Math.random()*4)]
-        }
-}
+@Module({
+    imports: [HttpModule],
+    providers: [WhoIs],
+    exports: [WhoIs]
+})
+export class BotsModule {}

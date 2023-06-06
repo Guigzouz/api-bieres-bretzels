@@ -6,7 +6,9 @@ import { BretzelsModule } from './bretzels/bretzels.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { EventsGateway } from './gateway/events/events.gateway';
-import { Groom } from './bots/bots.module';
+import { Groom } from './bots/entities/groom';
+import { WhoIs } from './bots/entities/who-is';
+import { BotsModule } from './bots/bots.module';
 
 @Module({
   imports: [BieresModule, BretzelsModule, 
@@ -22,7 +24,7 @@ import { Groom } from './bots/bots.module';
     database: process.env.DB_NAME,
     autoLoadEntities: true,
     synchronize: true, //synchronise les tables
-  }), Groom
+  }),BotsModule
 ],
   controllers: [AppController],
   providers: [AppService, EventsGateway],

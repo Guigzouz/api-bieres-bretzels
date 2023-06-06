@@ -1,7 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Groom } from 'src/bots/bots.module';
+import { Groom } from '../../bots/entities/groom';
+import { WhoIs } from '../../bots/entities/who-is';
+
 
 
 @WebSocketGateway()
@@ -14,14 +16,16 @@ export class EventsGateway
   private static LOGGER :Logger = new Logger('Gateway');
   private static CHANNEL = "message";
 
+  constructor(private whoIs: WhoIs) {}
+
   @WebSocketServer()
   private server: Server;
 
-  handleConnection(socket: Socket){
-    const ip = socket.client.conn.remoteAddress;
+  async handleConnection(socket: Socket, ...args: any[]){
+    const user = await this.whoIs.get(socket);
     socket.emit(EventsGateway.CHANNEL, Groom.INSTANCE.hello())
-    EventsGateway.LOGGER.log(`Connexion de : ${socket.id} ip = ${ip}`);
-    this.server.emit(EventsGateway.CHANNEL, `Welcome @${socket.id} on @${ip} !`)
+    EventsGateway.LOGGER.log(`Connexion de : ${user.name} ip = ${user.ip}`);
+    this.server.emit(EventsGateway.CHANNEL, `Welcome @${user.name} on @${user.ip} !`)
   }
 
   @SubscribeMessage(EventsGateway.CHANNEL)
@@ -30,8 +34,9 @@ export class EventsGateway
     socket.broadcast.emit(EventsGateway.CHANNEL, `@${socket.id} ${message}`);
   }
 
-  handleDisconnect(socket: Socket) {
-    const ip = socket.client.conn.remoteAddress;
-    this.server.emit(EventsGateway.CHANNEL, `@${socket.id} --> gone`);
+  async handleDisconnect(socket: Socket) {
+    const user = await this.whoIs.get(socket);
+    EventsGateway.LOGGER.log(`Déconnexion de : ${user.name} ip = ${user.ip}`);
+    this.server.emit(EventsGateway.CHANNEL, `Goodbye @${user.name} on @${user.ip} !`)
   }
 }
