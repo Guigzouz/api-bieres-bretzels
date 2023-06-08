@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { EventsGateway } from './gateway/events/events.gateway';
 import { BotsModule } from './bots/bots.module';
+import { MenusModule } from './menus/menus.module';
 
 @Module({
   imports: [BieresModule, BretzelsModule, 
@@ -22,7 +23,7 @@ import { BotsModule } from './bots/bots.module';
     database: process.env.DB_NAME,
     autoLoadEntities: true,
     synchronize: true, //synchronise les tables
-  }),BotsModule
+  }),BotsModule, MenusModule
 ],
   controllers: [AppController],
   providers: [AppService, EventsGateway],
