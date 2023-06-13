@@ -1,5 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToMany, JoinTable } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToMany, JoinTable, OneToOne, JoinColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
+import { Biere } from "../../bieres/entities/biere.entity";
+import { Menu } from "src/menus/entities/menu.entity";
 
 
 @Entity()
@@ -20,4 +22,11 @@ export class Bretzel {
 
     @Column()
     prix: number;
+
+    @OneToOne(() => Biere)
+    @JoinColumn()
+    bundle: Biere;
+
+    @ManyToMany(() => Menu)
+    menus: Menu[];
 }

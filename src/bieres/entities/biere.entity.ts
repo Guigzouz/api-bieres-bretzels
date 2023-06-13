@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToMany, JoinTable } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToMany, JoinTable, OneToOne } from "typeorm";
 import { TypeBiere } from "./type-biere.enum";
 import { ApiProperty } from "@nestjs/swagger";
 import { Menu } from "src/menus/entities/menu.entity";
+import { Bretzel } from "src/bretzels/entities/bretzel.entity";
 
 
 @Entity()
@@ -25,4 +26,7 @@ export class Biere {
 
     @Column({type: "enum", enum: TypeBiere})
     type: TypeBiere;
+
+    @OneToOne(() => Bretzel, bretzel => bretzel.bundle)
+    bundledWith: Bretzel
 }
